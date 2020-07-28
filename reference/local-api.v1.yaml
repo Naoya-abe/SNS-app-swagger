@@ -6,7 +6,7 @@ info:
 servers:
   - url: 'http://localhost:8080'
 paths:
-  /api/user/create:
+  /api/signup:
     post:
       summary: Create a new account
       operationId: post-api-user-create
@@ -24,7 +24,7 @@ paths:
                     type: string
                   name:
                     type: string
-      description: Create a new account when you sign up
+      description: Create a new account with sign up
       requestBody:
         content:
           application/json:
@@ -41,10 +41,102 @@ paths:
                   format: password
                 avatarUrl:
                   type: string
+                about:
+                  type: string
               required:
                 - email
                 - name
                 - password
             examples: {}
+    parameters: []
+  /api/users/myprofile:
+    get:
+      summary: Retrieve login user information
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      operationId: get-api-user-myprofile
+      description: Retrieve login user information
+      parameters: []
+    parameters: []
+  '/api/users/{userId}':
+    parameters:
+      - schema:
+          type: string
+        name: userId
+        in: path
+        required: true
+    get:
+      summary: Retrieve an user detail
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      operationId: get-api-users-userId
+    put:
+      summary: Update an user detail
+      operationId: put-api-users-userId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      description: Own account only
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+    patch:
+      summary: Partial update an user detail
+      operationId: patch-api-users-userId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      description: Own account only
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+    delete:
+      summary: Delete an user account
+      operationId: delete-api-users-userId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: number
+      description: Own account only
 components:
-  schemas: {}
+  schemas:
+    User:
+      title: User
+      type: object
+      properties:
+        name:
+          type: string
+        avatarUrl:
+          type: string
+        about:
+          type: string
