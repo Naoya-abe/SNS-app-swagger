@@ -6,7 +6,7 @@ info:
 servers:
   - url: 'http://localhost:8080'
 paths:
-  /api/signup:
+  /api/user/signup/:
     post:
       summary: Create a new account
       operationId: post-api-user-create
@@ -49,7 +49,7 @@ paths:
                 - password
             examples: {}
     parameters: []
-  /api/users/myprofile:
+  /api/user/myprofile/:
     get:
       summary: Retrieve login user information
       tags: []
@@ -64,7 +64,7 @@ paths:
       description: Retrieve login user information
       parameters: []
     parameters: []
-  '/api/users/{userId}':
+  '/api/user/profile/{userId}/':
     parameters:
       - schema:
           type: string
@@ -82,6 +82,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
       operationId: get-api-users-userId
+      description: ''
     put:
       summary: Update an user detail
       operationId: put-api-users-userId
@@ -128,6 +129,106 @@ paths:
                   userId:
                     type: number
       description: Own account only
+  /api/user/approval/:
+    get:
+      summary: Get friend requests
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FriendRequests'
+            application/xml:
+              schema:
+                type: object
+                properties: {}
+      operationId: get-api-user-approval
+    post:
+      summary: Post a friend request
+      operationId: post-api-user-approval
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FriendRequests'
+  '/api/user/approval/{approvalId}':
+    parameters:
+      - schema:
+          type: string
+        name: approvalId
+        in: path
+        required: true
+    put:
+      summary: ''
+      operationId: put-api-user-approval-approvalId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FriendRequests'
+    patch:
+      summary: ''
+      operationId: patch-api-user-approval-approvalId
+      responses:
+        '200':
+          description: OK
+  /api/dm/inbox:
+    get:
+      summary: Get direct messages to myself
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DirectMessages'
+      operationId: get-api-dm-inbox
+  /api/dm/message/:
+    post:
+      summary: Post a direct message
+      operationId: post-api-dm-message
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DirectMessages'
+  /authen/:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-authen
+  /api/posts/:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-api-posts
+  '/api/posts/{postId}':
+    parameters:
+      - schema:
+          type: string
+        name: postId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-api-posts-postId
 components:
   schemas:
     User:
@@ -139,4 +240,30 @@ components:
         avatarUrl:
           type: string
         about:
+          type: string
+    FriendRequests:
+      title: FriendRequests
+      type: object
+      x-examples: {}
+      properties:
+        askFrom:
+          type: integer
+        askTo:
+          type: integer
+        approved:
+          type: boolean
+          default: 'false'
+      required:
+        - askFrom
+        - askTo
+        - approved
+    DirectMessages:
+      title: DirectMessages
+      type: object
+      properties:
+        sender:
+          type: integer
+        receiver:
+          type: integer
+        message:
           type: string
