@@ -11,8 +11,8 @@ paths:
       summary: Create a new account
       operationId: post-api-user-create
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
           content:
             application/json:
               schema:
@@ -151,8 +151,8 @@ paths:
       summary: Post a friend request
       operationId: post-api-user-approval
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
           content:
             application/json:
               schema:
@@ -199,24 +199,86 @@ paths:
       summary: Post a direct message
       operationId: post-api-dm-message
       responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DirectMessages'
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DirectMessages'
+        description: ''
+  /authen/:
+    get:
+      summary: Token Retrieval endpoint
+      tags: []
+      responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DirectMessages'
-  /authen/:
-    get:
-      summary: Your GET endpoint
-      tags: []
-      responses: {}
+                type: object
+                properties:
+                  token:
+                    type: string
       operationId: get-authen
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+              required:
+                - email
+                - password
   /api/posts/:
     get:
-      summary: Your GET endpoint
+      summary: Retrieve a list of posts
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+        '':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
       operationId: get-api-posts
+    post:
+      summary: ''
+      operationId: post-api-posts
+      responses:
+        '201':
+          description: Created
+        '':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
   '/api/posts/{postId}':
     parameters:
       - schema:
@@ -225,10 +287,38 @@ paths:
         in: path
         required: true
     get:
-      summary: Your GET endpoint
+      summary: Retrieve a post detail
       tags: []
       responses: {}
       operationId: get-api-posts-postId
+    patch:
+      summary: ''
+      operationId: patch-api-posts-postId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+    delete:
+      summary: ''
+      operationId: delete-api-posts-postId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  postId:
+                    type: integer
 components:
   schemas:
     User:
@@ -267,3 +357,14 @@ components:
           type: integer
         message:
           type: string
+    Post:
+      title: Post
+      type: object
+      properties:
+        userId:
+          type: integer
+        content:
+          type: string
+      required:
+        - userId
+        - content
