@@ -22,8 +22,6 @@ paths:
                     type: number
                   email:
                     type: string
-                  name:
-                    type: string
       description: Create a new account with sign up
       requestBody:
         content:
@@ -34,18 +32,11 @@ paths:
                 email:
                   type: string
                   format: email
-                name:
-                  type: string
                 password:
                   type: string
                   format: password
-                avatarUrl:
-                  type: string
-                about:
-                  type: string
               required:
                 - email
-                - name
                 - password
             examples: {}
     parameters: []
@@ -64,13 +55,8 @@ paths:
       description: Retrieve login user information
       parameters: []
     parameters: []
-  '/api/user/profile/{userId}/':
-    parameters:
-      - schema:
-          type: string
-        name: userId
-        in: path
-        required: true
+  /api/user/profile:
+    parameters: []
     get:
       summary: Retrieve an user detail
       tags: []
@@ -126,9 +112,24 @@ paths:
               schema:
                 type: object
                 properties:
-                  userId:
+                  id:
                     type: number
       description: Own account only
+    post:
+      summary: ''
+      operationId: post-api-user-profile-userId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
   /api/user/approval/:
     get:
       summary: Get friend requests
@@ -157,16 +158,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FriendRequests'
-  '/api/user/approval/{approvalId}':
-    parameters:
-      - schema:
-          type: string
-        name: approvalId
-        in: path
-        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FriendRequests'
     put:
       summary: ''
-      operationId: put-api-user-approval-approvalId
+      operationId: put-api-user-approval
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/FriendRequests'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FriendRequests'
+    patch:
+      summary: ''
+      operationId: patch-api-user-approval
       responses:
         '200':
           description: OK
@@ -174,12 +192,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FriendRequests'
-    patch:
-      summary: ''
-      operationId: patch-api-user-approval-approvalId
-      responses:
-        '200':
-          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FriendRequests'
   /api/dm/inbox:
     get:
       summary: Get direct messages to myself
@@ -279,21 +296,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Post'
-  '/api/posts/{postId}':
-    parameters:
-      - schema:
-          type: string
-        name: postId
-        in: path
-        required: true
-    get:
-      summary: Retrieve a post detail
-      tags: []
-      responses: {}
-      operationId: get-api-posts-postId
-    patch:
+    put:
       summary: ''
-      operationId: patch-api-posts-postId
+      operationId: put-api-posts
       responses:
         '200':
           description: OK
@@ -306,9 +311,25 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Post'
+    patch:
+      summary: ''
+      operationId: patch-api-posts
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+        description: ''
     delete:
       summary: ''
-      operationId: delete-api-posts-postId
+      operationId: delete-api-posts
       responses:
         '200':
           description: OK
@@ -317,7 +338,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  postId:
+                  id:
                     type: integer
 components:
   schemas:
@@ -325,12 +346,17 @@ components:
       title: User
       type: object
       properties:
-        name:
+        displayName:
           type: string
-        avatarUrl:
+        avatar:
           type: string
         about:
           type: string
+        created_at:
+          type: string
+        userPro:
+          type: integer
+          description: OneToOne Field Foreign Key with User model.
     FriendRequests:
       title: FriendRequests
       type: object
