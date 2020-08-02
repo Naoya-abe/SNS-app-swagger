@@ -55,7 +55,7 @@ paths:
       description: Retrieve login user information
       parameters: []
     parameters: []
-  /api/user/profile:
+  /api/user/profile/:
     parameters: []
     get:
       summary: Retrieve an user detail
@@ -197,7 +197,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/FriendRequests'
-  /api/dm/inbox:
+  /api/dm/inbox/:
     get:
       summary: Get direct messages to myself
       tags: []
@@ -211,6 +211,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/DirectMessages'
       operationId: get-api-dm-inbox
+    parameters: []
   /api/dm/message/:
     post:
       summary: Post a direct message
