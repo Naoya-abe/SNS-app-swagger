@@ -4,136 +4,43 @@ info:
   version: '1.0'
   description: API for the local environment.
 servers:
-  - url: 'http://localhost:8080'
+  - url: 'http://localhost:8000'
 paths:
-  /api/user/signup/:
-    post:
-      summary: Create a new account
-      operationId: post-api-user-create
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: number
-                  email:
-                    type: string
-      description: Create a new account with sign up
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  format: email
-                password:
-                  type: string
-                  format: password
-              required:
-                - email
-                - password
-            examples: {}
-    parameters: []
   /api/user/myprofile/:
     get:
-      summary: Retrieve login user information
-      tags: []
+      summary: fetchUserAPI
+      tags:
+        - user
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    displayName:
+                      type: string
+                    avatar:
+                      type: string
+                    about:
+                      type: string
       operationId: get-api-user-myprofile
-      description: Retrieve login user information
-      parameters: []
-    parameters: []
-  /api/user/profile/:
-    parameters: []
+      description: ログインユーザのプロフィール情報を取得
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: 'Authorization: `Token ${token}`'
+  /api/user/follow-list/:
     get:
-      summary: Retrieve an user detail
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-      operationId: get-api-users-userId
-      description: ''
-    put:
-      summary: Update an user detail
-      operationId: put-api-users-userId
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-      description: Own account only
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-    patch:
-      summary: Partial update an user detail
-      operationId: patch-api-users-userId
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-      description: Own account only
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-    delete:
-      summary: Delete an user account
-      operationId: delete-api-users-userId
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: number
-      description: Own account only
-    post:
-      summary: ''
-      operationId: post-api-user-profile-userId
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-  /api/user/approval/:
-    get:
-      summary: Get friend requests
-      tags: []
+      summary: fetchFollowAPI
+      tags:
+        - user
       responses:
         '200':
           description: OK
@@ -142,198 +49,115 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/FriendRequests'
-            application/xml:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    askFrom:
+                      type: integer
+                    askTo:
+                      type: integer
+                    approved:
+                      type: boolean
+      operationId: get-api-user-follow-list
+      description: ログインユーザのフォローユーザ一覧取得
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: 'Authorization: `Token ${token}`'
+  /api/user/follower-list/:
+    get:
+      summary: fetchFollowerAPI
+      tags:
+        - user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
               schema:
-                type: object
-                properties: {}
-      operationId: get-api-user-approval
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    askFrom:
+                      type: integer
+                    askTo:
+                      type: integer
+                    approved:
+                      type: boolean
+      operationId: get-api-user-follower-list
+      description: ログインユーザのフォロワー覧取得
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: 'Authorization: `Token ${token}`'
+  /api/user/friends-list/:
+    get:
+      summary: fetchFriendsAPI
+      tags:
+        - user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    askFrom:
+                      type: integer
+                    askTo:
+                      type: integer
+                    approved:
+                      type: boolean
+                      default: 'true'
+      operationId: get-api-user-friends-list
+      description: 相互フォローのユーザ一覧を取得
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: 'Authorization: `Token ${token}`'
+  /api/user/profiles/:
+    get:
+      summary: fetchUsersAPI
+      tags:
+        - user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    displayName:
+                      type: string
+                    avatar:
+                      type: string
+                    about:
+                      type: string
+      operationId: get-api-user-profiles
+      description: サービスを利用しているユーザ情報の一覧を取得
     post:
-      summary: Post a friend request
-      operationId: post-api-user-approval
+      summary: createUserAPI
+      operationId: post-api-user-profiles
       responses:
         '201':
           description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FriendRequests'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/FriendRequests'
-    put:
-      summary: ''
-      operationId: put-api-user-approval
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties: {}
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/FriendRequests'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/FriendRequests'
-    patch:
-      summary: ''
-      operationId: patch-api-user-approval
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FriendRequests'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/FriendRequests'
-  /api/dm/inbox/:
-    get:
-      summary: Get direct messages to myself
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DirectMessages'
-      operationId: get-api-dm-inbox
-    parameters: []
-  /api/dm/message/:
-    post:
-      summary: Post a direct message
-      operationId: post-api-dm-message
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DirectMessages'
-      description: ''
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DirectMessages'
-        description: ''
-  /authen/:
-    get:
-      summary: Token Retrieval endpoint
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-      operationId: get-authen
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  format: email
-                password:
-                  type: string
-                  format: password
-              required:
-                - email
-                - password
-  /api/post/:
-    get:
-      summary: Retrieve a list of posts
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Post'
-        '':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Post'
-      operationId: get-api-posts
-    post:
-      summary: ''
-      operationId: post-api-posts
-      responses:
-        '201':
-          description: Created
-        '':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Post'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Post'
-    put:
-      summary: ''
-      operationId: put-api-posts
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Post'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Post'
-    patch:
-      summary: ''
-      operationId: patch-api-posts
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Post'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Post'
-        description: ''
-    delete:
-      summary: ''
-      operationId: delete-api-posts
-      responses:
-        '200':
-          description: OK
           content:
             application/json:
               schema:
@@ -341,7 +165,158 @@ paths:
                 properties:
                   id:
                     type: integer
+                  displayName:
+                    type: string
+                  avatar:
+                    type: string
+                  about:
+                    type: 'null'
+      description: ユーザの新規登録
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                displayName:
+                  type: string
+                avatar:
+                  default: 'null'
+                  type: 'null'
+                about:
+                  type: string
+                  default: '""'
+      tags:
+        - user
+    patch:
+      summary: patchUserAPI
+      operationId: patch-api-user-profiles
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  displayName:
+                    type: string
+                  avatar:
+                    type: string
+                  about:
+                    type: string
+      tags:
+        - user
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: '${userId}/'
+        - schema:
+            type: string
+          in: header
+          name: 'Authorization: `Token ${token}`'
+      description: ログインユーザ情報の更新
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                displayName:
+                  type: string
+                about:
+                  type: string
+                avatar:
+                  type: string
+        description: 更新したい情報がパラメータとして送信される
     parameters: []
+    delete:
+      summary: deleteUserAPI
+      operationId: delete-api-user-profiles
+      responses:
+        '204':
+          description: No Content
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+      tags:
+        - user
+      description: ユーザ情報の削除
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: 'Authorization: `Token ${token}`'
+        - schema:
+            type: integer
+          in: query
+          name: '${userId}/'
+  /api/user/approval/:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-api-user-approval
+    post:
+      summary: ''
+      operationId: post-api-user-approval
+      responses:
+        '200':
+          description: OK
+    patch:
+      summary: ''
+      operationId: patch-api-user-approval
+      responses:
+        '200':
+          description: OK
+    delete:
+      summary: ''
+      operationId: delete-api-user-approval
+      responses:
+        '200':
+          description: OK
+  /api/post/:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-api-post
+  /api/post/myposts/:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-api-post-myposts
+  /api/post/friend-posts/:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-api-post-friend-posts
+  /api/dm/message/:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-api-dm-s
+    parameters: []
+  /api/dm/inbox/:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-api-dm-inbox
 components:
   schemas:
     User:
