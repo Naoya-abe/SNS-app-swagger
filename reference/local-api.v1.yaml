@@ -36,6 +36,7 @@ paths:
             type: string
           in: header
           name: 'Authorization: `Token ${token}`'
+    parameters: []
   /api/user/follow-list/:
     get:
       summary: fetchFollowAPI
@@ -66,6 +67,7 @@ paths:
             type: string
           in: header
           name: 'Authorization: `Token ${token}`'
+    parameters: []
   /api/user/follower-list/:
     get:
       summary: fetchFollowerAPI
@@ -269,23 +271,100 @@ paths:
       responses: {}
       operationId: get-api-user-approval
     post:
-      summary: ''
+      summary: createFollowAPI
       operationId: post-api-user-approval
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  askFrom:
+                    type: integer
+                  askTo:
+                    type: integer
+                  approved:
+                    type: boolean
+      tags:
+        - user
+      description: |-
+        フォロー申請を行う。
+        フォロー承認のときも自動的にこのAPIが実行される。
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                askTo:
+                  type: integer
+                approved:
+                  type: boolean
+                  description: ''
+              required:
+                - askTo
+                - approved
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: 'Authorization: `Token ${token}`'
     patch:
-      summary: ''
+      summary: editFollowerAPI
       operationId: patch-api-user-approval
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  askFrom:
+                    type: integer
+                  askTo:
+                    type: integer
+                  approved:
+                    type: boolean
+      description: |-
+        Friend Request内にあるボタンを押す際に発火。
+        既存のフォロー申請のapprovedをfalseからtrueに変更する。
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: 'Authorization: `Token ${token}`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                approved:
+                  type: boolean
+        description: 既存のフォロー申請のapprovedをfalseからtrueに変更する。
     delete:
-      summary: ''
+      summary: deleteFollowAPI
       operationId: delete-api-user-approval
       responses:
-        '200':
+        '204':
           description: OK
+      description: フォローの削除
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: 'Authorization: `Token ${token}`'
+        - schema:
+            type: integer
+          in: query
+          name: '/${approvalId}'
   /api/post/:
     get:
       summary: Your GET endpoint
@@ -371,3 +450,5 @@ components:
       required:
         - userId
         - content
+tags:
+  - name: user
