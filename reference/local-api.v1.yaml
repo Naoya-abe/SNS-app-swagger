@@ -265,11 +265,6 @@ paths:
           in: query
           name: '${userId}/'
   /api/user/approval/:
-    get:
-      summary: Your GET endpoint
-      tags: []
-      responses: {}
-      operationId: get-api-user-approval
     post:
       summary: createFollowAPI
       operationId: post-api-user-approval
@@ -367,22 +362,277 @@ paths:
           name: '/${approvalId}'
   /api/post/:
     get:
-      summary: Your GET endpoint
-      tags: []
-      responses: {}
+      summary: fetchPostsAPI
+      tags:
+        - post
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    postFrom:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        displayName:
+                          type: string
+                        about:
+                          type: string
+                        avatar:
+                          type: string
+                    content:
+                      type: string
       operationId: get-api-post
+      description: |-
+        投稿一覧の取得
+        投稿の詳細取得はOPTIONSに記述しています！
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: 'Authorization: `Token ${token}`'
+    post:
+      summary: createPostAPI
+      operationId: post-api-post
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  postFrom:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      displayName:
+                        type: string
+                      about:
+                        type: string
+                      avatar:
+                        type: string
+                  content:
+                    type: string
+      description: 投稿の作成
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: 'Authorization: `Token ${token}`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                postFromId:
+                  type: integer
+      tags:
+        - post
+    put:
+      summary: editPostAPI
+      operationId: put-api-post
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  postFrom:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      displayName:
+                        type: string
+                      about:
+                        type: string
+                      avatar:
+                        type: string
+                  content:
+                    type: string
+      description: 投稿内容の変更
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: 'Authorization: `Token ${token}`'
+        - schema:
+            type: integer
+          in: query
+          name: '/${postId}/'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                postFromId:
+                  type: integer
+        description: ''
+      tags:
+        - post
+    delete:
+      summary: deletePostAPI
+      operationId: delete-api-post
+      responses:
+        '204':
+          description: OK
+      description: 投稿内容の削除
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: 'Authorization: `Token ${token}`'
+        - schema:
+            type: string
+          in: query
+          name: '/${postId}/'
+      tags:
+        - post
+    options:
+      summary: fetchPostAPI
+      operationId: options-api-post
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  postFrom:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      displayName:
+                        type: string
+                      about:
+                        type: string
+                      avatar:
+                        type: string
+                  content:
+                    type: string
+      description: 投稿の個別取得
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: 'Authorization: `Token ${token}`'
+        - schema:
+            type: string
+          in: query
+          name: '/${postId}/`'
   /api/post/myposts/:
     get:
-      summary: Your GET endpoint
+      summary: fetchUserPostsAPI
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    postFrom:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        displayName:
+                          type: string
+                        about:
+                          type: string
+                        avatar:
+                          type: string
+                    content:
+                      type: string
+              examples:
+                example-1:
+                  value:
+                    - id: 0
+                      postFrom:
+                        id: 0
+                        displayName: string
+                        about: string
+                        avatar: string
+                      contant: string
       operationId: get-api-post-myposts
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: 'Authorization: `Token ${token}`'
+      description: |-
+        ログインしているユーザの投稿一覧を取得
+        マイプロフィールページで取得したデータを展開する。
   /api/post/friend-posts/:
     get:
       summary: Your GET endpoint
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  postFrom:
+                    type: object
+                    properties:
+                      　id:
+                        type: integer
+                      displayName:
+                        type: string
+                      about:
+                        type: string
+                      avatar:
+                        type: string
+                  content:
+                    type: string
       operationId: get-api-post-friend-posts
+      description: 友人の詳細ページで取得したデータを展開
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: 'Authorization: `Token ${token}`'
+        - schema:
+            type: integer
+          in: query
+          name: friendId
+          description: 投稿詳細がほしいフレンドのID
   /api/dm/message/:
     get:
       summary: Your GET endpoint
@@ -452,3 +702,4 @@ components:
         - content
 tags:
   - name: user
+  - name: post
