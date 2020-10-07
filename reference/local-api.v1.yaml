@@ -546,10 +546,13 @@ paths:
             type: string
           in: query
           name: '/${postId}/`'
+      tags:
+        - post
   /api/post/myposts/:
     get:
       summary: fetchUserPostsAPI
-      tags: []
+      tags:
+        - post
       responses:
         '200':
           description: OK
@@ -597,7 +600,8 @@ paths:
   /api/post/friend-posts/:
     get:
       summary: Your GET endpoint
-      tags: []
+      tags:
+        - post
       responses:
         '200':
           description: OK
@@ -634,18 +638,74 @@ paths:
           name: friendId
           description: 投稿詳細がほしいフレンドのID
   /api/dm/message/:
-    get:
-      summary: Your GET endpoint
-      tags: []
-      responses: {}
-      operationId: get-api-dm-s
     parameters: []
+    post:
+      summary: createDMAPI
+      operationId: post-api-dm-message
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  sender:
+                    type: integer
+                  receiver:
+                    type: integer
+                  message:
+                    type: string
+      tags:
+        - dm
+      description: friendにdmを送信する
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: 'Authorization: `Token ${token}`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                receiver:
+                  type: integer
+                message:
+                  type: string
   /api/dm/inbox/:
     get:
-      summary: Your GET endpoint
-      tags: []
-      responses: {}
+      summary: fetchDMsAPI
+      tags:
+        - dm
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    sender:
+                      type: integer
+                    receiver:
+                      type: integer
+                    message:
+                      type: string
       operationId: get-api-dm-inbox
+      description: ログインユーザに送信されているDMの一覧を受け取る
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: 'Authorization: `Token ${token}`'
 components:
   schemas:
     User:
@@ -703,3 +763,4 @@ components:
 tags:
   - name: user
   - name: post
+  - name: dm
